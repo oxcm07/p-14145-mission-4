@@ -12,7 +12,7 @@ public class WiseSayingRepository {
     private int index = 1;
 
     public WiseSaying save(WiseSaying wiseSaying) {
-        if(wiseSaying.isNew()) {
+        if (wiseSaying.isNew()) {
             wiseSaying.setId(index++);
             wiseSayings.add(wiseSaying);
         }
@@ -24,11 +24,12 @@ public class WiseSayingRepository {
         return wiseSayings
                 .reversed()
                 .stream()
+                .skip((pageNo - 1) * pageSize)
                 .limit(pageSize)
                 .collect(Collectors.toList());
     }
 
-    public int findIndexById(int id){
+    public int findIndexById(int id) {
         return IntStream
                 .range(0, wiseSayings.size())
                 .filter(i -> wiseSayings.get(i).getId() == id)
@@ -36,15 +37,15 @@ public class WiseSayingRepository {
                 .orElse(-1);
     }
 
-    public WiseSaying findById(int id){
+    public WiseSaying findById(int id) {
         int idx = findIndexById(id);
 
-        if(idx == -1) return null;
+        if (idx == -1) return null;
 
         return wiseSayings.get(idx);
     }
 
-    public void delete (WiseSaying wiseSaying){
+    public void delete(WiseSaying wiseSaying) {
         wiseSayings.remove(wiseSaying);
     }
 
@@ -55,6 +56,7 @@ public class WiseSayingRepository {
                 .filter(
                         w -> w.getContent().contains(keyword)
                 )
+                .skip((pageNo - 1) * pageSize)
                 .limit(pageSize)
                 .collect(Collectors.toList());
     }
@@ -66,18 +68,20 @@ public class WiseSayingRepository {
                 .filter(
                         w -> w.getAuthor().contains(keyword)
                 )
+                .skip((pageNo - 1) * pageSize)
                 .limit(pageSize)
                 .collect(Collectors.toList());
     }
 
     public List<WiseSaying> findForListByContentContainingOrAuthorContaining(String keyword1, String keyword2, int pageSize, int pageNo) {
         return wiseSayings
+                .reversed()
                 .stream()
                 .filter(
                         w -> w.getContent().contains(keyword1) || w.getAuthor().contains(keyword2)
                 )
+                .skip((pageNo - 1) * pageSize)
                 .limit(pageSize)
-                .collect(Collectors.toList())
-                .reversed();
+                .collect(Collectors.toList());
     }
 }
